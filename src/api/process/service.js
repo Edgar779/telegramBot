@@ -10,8 +10,8 @@ class ProcessServices {
     startBot = async (req, res) => {
         const users = {};
 
-        // Function to send the next question with a 3-second delay
-        function sendNextQuestion(ctx, user, question) {
+        // Function to send a question with a 3-second delay
+        function sendQuestionWithDelay(ctx, user, question) {
             setTimeout(() => {
                 ctx.reply(question);
             }, 3000);
@@ -44,7 +44,7 @@ class ProcessServices {
                     }
                     user.name = userAnswer;
                     user.currentQuestion++;
-                    sendNextQuestion(ctx, user, `Вопрос ${user.currentQuestion}: Какая ваша фамилия?`);
+                    sendQuestionWithDelay(ctx, user, `Вопрос ${user.currentQuestion}: Какая ваша фамилия?`);
                     break;
                 case 1:
                     if (!userAnswer || userAnswer.trim() === '') {
@@ -53,7 +53,61 @@ class ProcessServices {
                     }
                     user.surname = userAnswer;
                     user.currentQuestion++;
-                    sendNextQuestion(ctx, user, `Вопрос ${user.currentQuestion}: Какое ваше отчество?`);
+                    sendQuestionWithDelay(ctx, user, `Вопрос ${user.currentQuestion}: Какое ваше отчество?`);
+                    break;
+                case 2:
+                    if (!userAnswer || userAnswer.trim() === '') {
+                        ctx.reply('Пожалуйста, введите ваше отчество.');
+                        return;
+                    }
+                    user.lastname = userAnswer;
+                    user.currentQuestion++;
+                    sendQuestionWithDelay(ctx, user, `Вопрос ${user.currentQuestion}: Какой ваш пол?`);
+                    break;
+                case 3:
+                    if (!userAnswer || userAnswer.trim() === '') {
+                        ctx.reply('Пожалуйста, введите ваш пол.');
+                        return;
+                    }
+                    user.gender = userAnswer;
+                    user.currentQuestion++;
+                    sendQuestionWithDelay(ctx, user, `Вопрос ${user.currentQuestion}: Сколько вам лет?`);
+                    break;
+                case 4:
+                    if (!userAnswer || isNaN(userAnswer)) {
+                        ctx.reply('Пожалуйста, введите ваш возраст числом.');
+                        return;
+                    }
+                    user.age = userAnswer;
+                    user.currentQuestion++;
+                    sendQuestionWithDelay(ctx, user, `Вопрос ${user.currentQuestion}: Какая ваша профессия?`);
+                    break;
+                case 5:
+                    if (!userAnswer || userAnswer.trim() === '') {
+                        ctx.reply('Пожалуйста, введите вашу профессию.');
+                        return;
+                    }
+                    user.profession = userAnswer;
+                    user.currentQuestion++;
+                    sendQuestionWithDelay(ctx, user, `Вопрос ${user.currentQuestion}: Какая ваша зарплата?`);
+                    break;
+                case 6:
+                    if (!userAnswer || isNaN(userAnswer)) {
+                        ctx.reply('Пожалуйста, введите вашу зарплату числом.');
+                        return;
+                    }
+                    user.salary = userAnswer;
+                    user.currentQuestion++;
+                    sendQuestionWithDelay(ctx, user, `Вопрос ${user.currentQuestion}: Какие у вас хобби?`);
+                    break;
+                case 7:
+                    if (!userAnswer || userAnswer.trim() === '') {
+                        ctx.reply('Пожалуйста, введите ваши хобби.');
+                        return;
+                    }
+                    user.hobbies = userAnswer;
+                    user.currentQuestion++;
+                    sendQuestionWithDelay(ctx, user, `Вопрос ${user.currentQuestion}: Пожалуйста, пришлите фотографию.`);
                     break;
                 // Add more cases for text-based questions here
                 default:
@@ -74,7 +128,7 @@ class ProcessServices {
         
             const photoId = ctx.message.photo[0].file_id;
         
-            if (user.currentQuestion === 2) { // Adjusted currentQuestion based on previous cases
+            if (user.currentQuestion === 8) {
                 user.photo = photoId;
                 user.currentQuestion++;
                 ctx.reply(`Пожалуйста, выберите один из вариантов:`, {
@@ -93,7 +147,7 @@ class ProcessServices {
             const userId = ctx.from.id;
             const user = users[userId];
         
-            if (user && user.currentQuestion === 3) { // Adjusted currentQuestion based on previous cases
+            if (user && user.currentQuestion === 9) {
                 const option = ctx.callbackQuery.data;
                 // Process the chosen option accordingly
                 ctx.reply(`Вы выбрали: ${option}`);
